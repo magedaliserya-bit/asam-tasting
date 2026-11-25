@@ -1,0 +1,287 @@
+<!doctype html>
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>دفتر تذوّق أسَام</title>
+<meta name="theme-color" content="#627138">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="تذوّق أسَام">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ol:#627138;--cr:#FEF2D2;--db:#201512;--bg:#FBF6EA;--line:#E7DDC4;--mut:#6b5f4a;--blk:#9A3B1E;--ool:#C8862B;--grn:#8FA33A}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{background:var(--bg);font-family:"Noto Naskh Arabic",system-ui,sans-serif;color:var(--db);-webkit-user-select:none;user-select:none;overscroll-behavior:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+.top{background:var(--ol);color:var(--cr);padding:calc(env(safe-area-inset-top) + 14px) 20px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:5}
+.top img{height:34px;display:block}.top .t{font-size:15px;opacity:.85}
+.sync{font-size:12px;opacity:.8;margin-top:2px;text-align:left}
+main{padding-bottom:calc(env(safe-area-inset-bottom) + 96px)}
+.today{margin:14px 16px 6px;background:#fff;border:1px solid var(--line);border-radius:16px;display:flex}
+.today div{flex:1;text-align:center;padding:12px 4px}
+.today b{display:block;font-size:24px;color:var(--ol);line-height:1.2}
+.today span{font-size:12.5px;color:var(--mut)}
+.today div+div{border-right:1px solid var(--line)}
+h2{font-size:17px;margin:16px 18px 8px;font-weight:700}
+.tabs{display:flex;gap:8px;margin:0 16px 10px;overflow-x:auto}
+.tab{padding:6px 14px;border-radius:99px;background:#fff;border:1px solid var(--line);font-size:14px;white-space:nowrap}
+.tab.on{background:var(--ol);color:var(--cr);border-color:var(--ol)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 16px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 12px 12px 10px;display:flex;align-items:center;gap:10px;min-height:62px;text-align:right}
+.card:active{background:#F4F6EC}
+.cup{width:30px;height:30px;border-radius:9px 9px 12px 12px;flex:none;position:relative}
+.cup:after{content:"";position:absolute;inset:7px 6px 6px;border-radius:3px 3px 7px 7px;background:rgba(255,255,255,.25)}
+.k-b{background:var(--blk)}.k-o{background:var(--ool)}.k-g{background:var(--grn)}
+.card .n{font-size:14.5px;font-weight:600;line-height:1.35}
+.shade{position:fixed;inset:0;background:rgba(32,21,18,.45);z-index:20;display:none}
+.sheet{position:fixed;left:0;right:0;bottom:0;background:var(--bg);border-radius:24px 24px 0 0;padding:14px 20px calc(env(safe-area-inset-bottom) + 20px);z-index:21;transform:translateY(105%);transition:transform .22s ease}
+.open .shade{display:block}.open .sheet{transform:none}
+.grab{width:42px;height:5px;border-radius:9px;background:#d8ccb0;margin:0 auto 14px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:16px}.sh .cup{width:40px;height:40px}
+.sh b{font-size:20px;display:block}.sh span{font-size:13px;color:var(--mut)}
+.row{display:flex;align-items:center;justify-content:space-between;background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin-bottom:10px}
+.row .l{font-size:15.5px;font-weight:600}.row .l small{display:block;font-size:12px;color:#7b6f58;font-weight:400}
+.step{display:flex;align-items:center;gap:12px;direction:ltr}
+.step button{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-size:24px;border:1px solid var(--line);background:var(--bg);color:var(--ol)}
+.step button.p{background:var(--ol);color:var(--cr);border-color:var(--ol)}
+.step b{font-size:22px;min-width:28px;text-align:center}
+.btn{display:block;width:100%;margin-top:8px;background:var(--ol);color:var(--cr);text-align:center;padding:15px;border-radius:14px;font-size:18px;font-weight:700}
+.btn:disabled{opacity:.5}
+.list{margin:0 16px}
+.it{background:#fff;border:1px solid var(--line);border-radius:14px;padding:11px 12px;display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.it .m{flex:1}.it .m b{font-size:15px}.it .m span{display:block;font-size:12.5px;color:var(--mut)}
+.it .tm{font-size:12.5px;color:#7b6f58}
+.it.pend{opacity:.6}
+.empty{margin:30px 16px;text-align:center;color:var(--mut);font-size:15px}
+.toast{position:fixed;left:16px;right:16px;bottom:calc(env(safe-area-inset-bottom) + 92px);background:var(--db);color:var(--cr);border-radius:14px;padding:12px 14px;font-size:14.5px;display:none;justify-content:space-between;align-items:center;z-index:30}
+.toast.show{display:flex}.toast button{color:#E9C98A;font-weight:700}
+.nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);display:flex;padding:10px 0 calc(env(safe-area-inset-bottom) + 10px);z-index:10}
+.nav button{flex:1;text-align:center;font-size:12.5px;color:#8a7e66}.nav button.on{color:var(--ol);font-weight:700}
+.nav svg{display:block;width:24px;height:24px;margin:0 auto 3px}
+.pin{position:fixed;inset:0;background:var(--ol);color:var(--cr);z-index:50;display:none;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center}
+.pin.show{display:flex}
+.pin img{height:60px;margin-bottom:28px}
+.pin p{font-size:17px;margin-bottom:16px}
+.pin input{width:200px;font:inherit;font-size:28px;text-align:center;letter-spacing:10px;padding:10px;border-radius:14px;border:0;background:var(--cr);color:var(--db);direction:ltr}
+.pin .btn{width:200px;background:var(--cr);color:var(--ol);margin-top:14px}
+.pin .err{min-height:24px;margin-top:10px;color:#FFD9A8;font-size:14px}
+</style>
+</head>
+<body>
+<header class="top"><img src="logo.svg" alt="أسَام"><div><div class="t">دفتر التذوّق</div><div class="sync" id="sync"></div></div></header>
+
+<main>
+  <div class="today">
+    <div><b id="sT">0</b><span>داقوا اليوم</span></div>
+    <div><b id="sP">0</b><span>طلبوا براد</span></div>
+    <div><b id="sK">0</b><span>اشتروا عبوة</span></div>
+  </div>
+  <section id="vNew">
+    <h2>اختر الشاي اللي قدّمته</h2>
+    <div class="tabs" id="tabs"></div>
+    <div class="grid" id="grid"></div>
+  </section>
+  <section id="vLog" hidden>
+    <h2 id="logTitle">سجل اليوم</h2>
+    <div class="list" id="list"></div>
+  </section>
+</main>
+
+<div id="sheetWrap">
+  <div class="shade" id="shade"></div>
+  <div class="sheet" role="dialog" aria-modal="true">
+    <div class="grab"></div>
+    <div class="sh"><div class="cup" id="shCup"></div><div><b id="shName"></b><span id="shType"></span></div></div>
+    <div id="rows"></div>
+    <button class="btn" id="save">تسجيل</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"><span id="toastMsg"></span><button id="undo">تراجع</button></div>
+
+<nav class="nav">
+  <button class="on" id="nNew"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 9h11v5a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5z"/><path d="M16 10h1.5a2.5 2.5 0 0 1 0 5H16"/><path d="M9 3v3M12 3v3"/></svg>تذوّق جديد</button>
+  <button id="nLog"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>سجل اليوم</button>
+</nav>
+
+<div class="pin" id="pin">
+  <img src="logo.svg" alt="أسَام">
+  <p>اكتب الرقم السري لدفتر التذوّق</p>
+  <input id="pinIn" inputmode="numeric" maxlength="8" autocomplete="off">
+  <button class="btn" id="pinGo">دخول</button>
+  <div class="err" id="pinErr"></div>
+</div>
+
+<script>
+// رابط الـ Apps Script بعد النشر
+const API = 'https://script.google.com/macros/s/AKfycbwqvNx8e4qxSMc0J-1T2VITbnFPoKR5qqV3X-rGlBczDwGVqWlgr1nzAyGJuA_C80ltbw/exec';
+
+const TEAS = [
+  ['أسام هالماري','b'],['كيمون','b'],['أسود صيني يونان','b'],['ديان يونان','b'],['دا باي هاو الذهبي','b'],
+  ['تي غوان ين','o'],['دان كونغ','o'],['دان كونغ الأوركيد','o'],
+  ['جيوكورو الياباني','g'],['سنشا شيزوكا','g'],['يون وو الأخضر','g'],['سنشا عضوي 8912','g'],['لؤلؤ الياسمين','g']
+];
+const TYPE = {b:'أسود',o:'أولونغ',g:'أخضر'};
+const $ = id => document.getElementById(id);
+const store = {
+  get(k, d){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; }catch(e){ return d; } },
+  set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+};
+let pin = store.get('pin', '');
+let rows = [];               // سجلات اليوم من الشيت
+let queue = store.get('queue', []); // عمليات لسه ما اتبعتتش
+let filter = 'all', current = null, lastId = null, toastTimer = null;
+const todayKey = () => new Date().toLocaleDateString('en-CA', {timeZone:'Asia/Riyadh'});
+const timeNow = () => new Date().toLocaleTimeString('en-GB', {timeZone:'Asia/Riyadh', hour:'2-digit', minute:'2-digit'});
+
+function el(tag, cls, text){ const e = document.createElement(tag); if(cls) e.className = cls; if(text != null) e.textContent = text; return e; }
+
+// ---------- الشاشات ----------
+function renderTabs(){
+  const t = $('tabs'); t.textContent = '';
+  [['all','الكل'],['b','أسود'],['o','أولونغ'],['g','أخضر']].forEach(([k, n]) => {
+    const b = el('button', 'tab' + (filter === k ? ' on' : ''), n);
+    b.onclick = () => { filter = k; renderTabs(); renderGrid(); };
+    t.appendChild(b);
+  });
+}
+function renderGrid(){
+  const g = $('grid'); g.textContent = '';
+  TEAS.filter(t => filter === 'all' || t[1] === filter).forEach(t => {
+    const c = el('button', 'card'); c.appendChild(el('div', 'cup k-' + t[1])); c.appendChild(el('div', 'n', t[0]));
+    c.onclick = () => openSheet(t);
+    g.appendChild(c);
+  });
+}
+function allToday(){
+  const pend = queue.filter(q => q.action === 'add' && q.date === todayKey()).map(q => Object.assign({}, q, {pending:true}));
+  const del = new Set(queue.filter(q => q.action === 'delete').map(q => q.id));
+  const ids = new Set(rows.map(r => r.id));
+  return rows.concat(pend.filter(p => !ids.has(p.id))).filter(r => !del.has(r.id));
+}
+function renderStats(){
+  const a = allToday();
+  $('sT').textContent = a.reduce((s, r) => s + (+r.tasted || 0), 0);
+  $('sP').textContent = a.reduce((s, r) => s + (+r.pots || 0), 0);
+  $('sK').textContent = a.reduce((s, r) => s + (+r.packs || 0), 0);
+}
+function renderLog(){
+  const l = $('list'); l.textContent = '';
+  const a = allToday().slice().sort((x, y) => String(y.time).localeCompare(String(x.time)));
+  if(!a.length){ l.appendChild(el('div', 'empty', 'لسه مفيش تذوّق متسجل النهارده')); return; }
+  a.forEach(r => {
+    const it = el('div', 'it' + (r.pending ? ' pend' : ''));
+    const k = (TEAS.find(t => t[0] === r.tea) || [0,'b'])[1];
+    it.appendChild(el('div', 'cup k-' + k));
+    const m = el('div', 'm'); m.appendChild(el('b', null, r.tea));
+    const bits = [r.tasted + ' داقوا']; if(+r.pots) bits.push(r.pots + ' براد'); if(+r.packs) bits.push(r.packs + ' عبوة');
+    m.appendChild(el('span', null, bits.join(' · ') + (r.pending ? ' · لسه بيتبعت' : '')));
+    it.appendChild(m); it.appendChild(el('div', 'tm', r.time));
+    l.appendChild(it);
+  });
+}
+function renderAll(){ renderStats(); renderLog(); $('sync').textContent = queue.length ? 'في ' + queue.length + ' لسه بيتبعت' : ''; }
+
+function show(view){
+  $('vNew').hidden = view !== 'new'; $('vLog').hidden = view !== 'log';
+  $('nNew').classList.toggle('on', view === 'new'); $('nLog').classList.toggle('on', view === 'log');
+  if(view === 'log'){ renderLog(); refresh(); }
+}
+$('nNew').onclick = () => show('new');
+$('nLog').onclick = () => show('log');
+
+// ---------- شاشة التسجيل ----------
+const FIELDS = [['cups','كام كوب حضّرت',''],['tasted','كام واحد داق',''],['pots','طلبوا براد','من اللي داقوا'],['packs','اشتروا عبوة','من اللي داقوا']];
+let vals = {};
+function openSheet(t){
+  current = t; vals = {cups:1, tasted:1, pots:0, packs:0};
+  $('shCup').className = 'cup k-' + t[1]; $('shName').textContent = t[0]; $('shType').textContent = TYPE[t[1]];
+  const r = $('rows'); r.textContent = '';
+  FIELDS.forEach(([k, label, sub]) => {
+    const row = el('div', 'row'); const l = el('div', 'l', label); if(sub) l.appendChild(el('small', null, sub));
+    const st = el('div', 'step'); const minus = el('button', null, '−'); const num = el('b', null, vals[k]); const plus = el('button', 'p', '+');
+    minus.onclick = () => { vals[k] = Math.max(0, vals[k] - 1); num.textContent = vals[k]; };
+    plus.onclick = () => { vals[k] = Math.min(99, vals[k] + 1); num.textContent = vals[k]; };
+    st.append(minus, num, plus); row.append(l, st); r.appendChild(row);
+  });
+  document.body.classList.add('open');
+}
+function closeSheet(){ document.body.classList.remove('open'); }
+$('shade').onclick = closeSheet;
+$('save').onclick = () => {
+  if(!current) return;
+  if(vals.tasted < 1){ alertMsg('لازم واحد على الأقل يكون داق'); return; }
+  if(vals.pots + vals.packs > vals.tasted * 3){ alertMsg('راجع الأرقام'); return; }
+  const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  queue.push({action:'add', id, tea:current[0], type:TYPE[current[1]], cups:vals.cups, tasted:vals.tasted, pots:vals.pots, packs:vals.packs, date:todayKey(), time:timeNow()});
+  store.set('queue', queue); lastId = id;
+  closeSheet(); renderAll(); toast('اتسجّل ✓ ' + current[0], true); flush();
+};
+
+function toast(msg, withUndo){
+  $('toastMsg').textContent = msg; $('undo').style.display = withUndo ? '' : 'none';
+  $('toast').classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => $('toast').classList.remove('show'), 6000);
+}
+function alertMsg(m){ toast(m, false); }
+$('undo').onclick = () => {
+  if(!lastId) return;
+  const i = queue.findIndex(q => q.action === 'add' && q.id === lastId);
+  if(i >= 0) queue.splice(i, 1); else queue.push({action:'delete', id:lastId});
+  store.set('queue', queue); lastId = null; $('toast').classList.remove('show'); renderAll(); flush();
+};
+
+// ---------- الاتصال بالشيت ----------
+let flushing = false;
+async function flush(){
+  if(flushing || !queue.length || !API.startsWith('https://')) return;
+  flushing = true;
+  try{
+    while(queue.length){
+      const q = queue[0];
+      const res = await fetch(API, {method:'POST', body:JSON.stringify(Object.assign({pin}, q))});
+      const j = await res.json();
+      if(!j.ok){ if(j.error === 'pin'){ askPin('الرقم السري اتغير، اكتبه تاني'); } break; }
+      queue.shift(); store.set('queue', queue);
+      if(q.action === 'add') rows.push(q); else rows = rows.filter(r => r.id !== q.id);
+    }
+  }catch(e){ /* مفيش نت: هيتبعت بعدين */ }
+  flushing = false; renderAll();
+}
+async function refresh(){
+  if(!API.startsWith('https://') || !pin) return;
+  try{
+    const res = await fetch(API + '?pin=' + encodeURIComponent(pin));
+    const j = await res.json();
+    if(j.ok){ rows = j.rows || []; renderAll(); }
+    else if(j.error === 'pin') askPin('الرقم السري غلط');
+  }catch(e){}
+}
+
+// ---------- الرقم السري ----------
+function askPin(err){ $('pin').classList.add('show'); $('pinErr').textContent = err || ''; $('pinIn').value = ''; }
+$('pinGo').onclick = async () => {
+  const v = $('pinIn').value.trim(); if(!v) return;
+  $('pinErr').textContent = '...';
+  try{
+    const res = await fetch(API + '?pin=' + encodeURIComponent(v)); const j = await res.json();
+    if(j.ok){ pin = v; store.set('pin', pin); $('pin').classList.remove('show'); rows = j.rows || []; renderAll(); flush(); }
+    else $('pinErr').textContent = 'الرقم غلط';
+  }catch(e){ $('pinErr').textContent = 'اتأكد من النت وجرّب تاني'; }
+};
+
+window.addEventListener('online', flush);
+document.addEventListener('visibilitychange', () => { if(!document.hidden){ flush(); refresh(); } });
+setInterval(flush, 30000);
+
+renderTabs(); renderGrid(); renderAll();
+if(!pin) askPin(); else { refresh(); flush(); }
+</script>
+</body>
+</html>
