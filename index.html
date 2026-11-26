@@ -52,6 +52,14 @@ h2{font-size:17px;margin:16px 18px 8px;font-weight:700}
 .step button{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-size:24px;border:1px solid var(--line);background:var(--bg);color:var(--ol)}
 .step button.p{background:var(--ol);color:var(--cr);border-color:var(--ol)}
 .step b{font-size:22px;min-width:28px;text-align:center}
+.rate{background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px 12px 12px;margin-bottom:10px}
+.rate .l{font-size:15.5px;font-weight:600;margin-bottom:8px}
+.faces{display:flex;gap:8px}
+.faces button{flex:1;border:1.5px solid var(--line);border-radius:12px;padding:8px 2px 6px;background:var(--bg);text-align:center}
+.faces button i{display:block;font-style:normal;font-size:30px;line-height:1.15}
+.faces button span{font-size:12.5px;color:#7b6f58}
+.faces button.on{border-color:var(--ol);background:#EEF1E2}
+.faces button.on span{color:var(--ol);font-weight:700}
 .btn{display:block;width:100%;margin-top:8px;background:var(--ol);color:var(--cr);text-align:center;padding:15px;border-radius:14px;font-size:18px;font-weight:700}
 .btn:disabled{opacity:.5}
 .list{margin:0 16px}
@@ -79,12 +87,12 @@ h2{font-size:17px;margin:16px 18px 8px;font-weight:700}
 
 <main>
   <div class="today">
-    <div><b id="sT">0</b><span>داقوا اليوم</span></div>
-    <div><b id="sP">0</b><span>طلبوا براد</span></div>
+    <div><b id="sT">0</b><span>تذوّقوا اليوم</span></div>
+    <div><b id="sP">0</b><span>براد محضّر</span></div>
     <div><b id="sK">0</b><span>اشتروا عبوة</span></div>
   </div>
   <section id="vNew">
-    <h2>اختر الشاي اللي قدّمته</h2>
+    <h2>اختر نوع الشاي الذي قدّمته</h2>
     <div class="tabs" id="tabs"></div>
     <div class="grid" id="grid"></div>
   </section>
@@ -113,7 +121,7 @@ h2{font-size:17px;margin:16px 18px 8px;font-weight:700}
 
 <div class="pin" id="pin">
   <img src="logo.svg" alt="أسَام">
-  <p>اكتب الرقم السري لدفتر التذوّق</p>
+  <p>أدخل الرقم السري لدفتر التذوّق</p>
   <input id="pinIn" inputmode="numeric" maxlength="8" autocomplete="off">
   <button class="btn" id="pinGo">دخول</button>
   <div class="err" id="pinErr"></div>
@@ -129,6 +137,7 @@ const TEAS = [
   ['جيوكورو الياباني','g'],['سنشا شيزوكا','g'],['يون وو الأخضر','g'],['سنشا عضوي 8912','g'],['لؤلؤ الياسمين','g']
 ];
 const TYPE = {b:'أسود',o:'أولونغ',g:'أخضر'};
+const RATES = [[3,'😍','أعجبهم جدًا'],[2,'🙂','عادي'],[1,'😐','ما أعجبهم']];
 const $ = id => document.getElementById(id);
 const store = {
   get(k, d){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; }catch(e){ return d; } },
@@ -169,25 +178,25 @@ function allToday(){
 function renderStats(){
   const a = allToday();
   $('sT').textContent = a.reduce((s, r) => s + (+r.tasted || 0), 0);
-  $('sP').textContent = a.reduce((s, r) => s + (+r.pots || 0), 0);
+  $('sP').textContent = a.reduce((s, r) => s + (+r.cups || 0), 0);
   $('sK').textContent = a.reduce((s, r) => s + (+r.packs || 0), 0);
 }
 function renderLog(){
   const l = $('list'); l.textContent = '';
   const a = allToday().slice().sort((x, y) => String(y.time).localeCompare(String(x.time)));
-  if(!a.length){ l.appendChild(el('div', 'empty', 'لسه مفيش تذوّق متسجل النهارده')); return; }
+  if(!a.length){ l.appendChild(el('div', 'empty', 'لا توجد تجارب تذوّق مسجّلة اليوم')); return; }
   a.forEach(r => {
     const it = el('div', 'it' + (r.pending ? ' pend' : ''));
     const k = (TEAS.find(t => t[0] === r.tea) || [0,'b'])[1];
     it.appendChild(el('div', 'cup k-' + k));
     const m = el('div', 'm'); m.appendChild(el('b', null, r.tea));
-    const bits = [r.tasted + ' داقوا']; if(+r.pots) bits.push(r.pots + ' براد'); if(+r.packs) bits.push(r.packs + ' عبوة');
-    m.appendChild(el('span', null, bits.join(' · ') + (r.pending ? ' · لسه بيتبعت' : '')));
+    const bits = [r.cups + ' براد', r.tasted + ' تذوّقوا']; if(+r.packs) bits.push(r.packs + ' عبوة'); const rt = RATES.find(x => x[0] === +r.rating); if(rt) bits.push(rt[1]);
+    m.appendChild(el('span', null, bits.join(' · ') + (r.pending ? ' · قيد الإرسال' : '')));
     it.appendChild(m); it.appendChild(el('div', 'tm', r.time));
     l.appendChild(it);
   });
 }
-function renderAll(){ renderStats(); renderLog(); $('sync').textContent = queue.length ? 'في ' + queue.length + ' لسه بيتبعت' : ''; }
+function renderAll(){ renderStats(); renderLog(); $('sync').textContent = queue.length ? queue.length + ' قيد الإرسال' : ''; }
 
 function show(view){
   $('vNew').hidden = view !== 'new'; $('vLog').hidden = view !== 'log';
@@ -198,10 +207,10 @@ $('nNew').onclick = () => show('new');
 $('nLog').onclick = () => show('log');
 
 // ---------- شاشة التسجيل ----------
-const FIELDS = [['cups','كام كوب حضّرت',''],['tasted','كام واحد داق',''],['pots','طلبوا براد','من اللي داقوا'],['packs','اشتروا عبوة','من اللي داقوا']];
+const FIELDS = [['cups','كم براد حضّرت؟','البراد 500 مل'],['tasted','كم شخص تذوّق؟',''],['packs','اشتروا عبوة','من المتذوّقين']];
 let vals = {};
 function openSheet(t){
-  current = t; vals = {cups:1, tasted:1, pots:0, packs:0};
+  current = t; vals = {cups:1, tasted:1, pots:0, packs:0, rating:0};
   $('shCup').className = 'cup k-' + t[1]; $('shName').textContent = t[0]; $('shType').textContent = TYPE[t[1]];
   const r = $('rows'); r.textContent = '';
   FIELDS.forEach(([k, label, sub]) => {
@@ -211,18 +220,27 @@ function openSheet(t){
     plus.onclick = () => { vals[k] = Math.min(99, vals[k] + 1); num.textContent = vals[k]; };
     st.append(minus, num, plus); row.append(l, st); r.appendChild(row);
   });
+  const box = el('div', 'rate'); box.appendChild(el('div', 'l', 'انطباع المتذوّقين'));
+  const fc = el('div', 'faces');
+  RATES.forEach(([v, ic, nm]) => {
+    const b = el('button'); b.appendChild(el('i', null, ic)); b.appendChild(el('span', null, nm));
+    b.onclick = () => { vals.rating = v; [...fc.children].forEach(x => x.classList.remove('on')); b.classList.add('on'); };
+    fc.appendChild(b);
+  });
+  box.appendChild(fc); r.appendChild(box);
   document.body.classList.add('open');
 }
 function closeSheet(){ document.body.classList.remove('open'); }
 $('shade').onclick = closeSheet;
 $('save').onclick = () => {
   if(!current) return;
-  if(vals.tasted < 1){ alertMsg('لازم واحد على الأقل يكون داق'); return; }
-  if(vals.pots + vals.packs > vals.tasted * 3){ alertMsg('راجع الأرقام'); return; }
+  if(vals.tasted < 1){ alertMsg('يجب أن يتذوّق شخص واحد على الأقل'); return; }
+  if(vals.packs > vals.tasted * 3){ alertMsg('راجع الأرقام'); return; }
+  if(!vals.rating){ alertMsg('اختر انطباع المتذوّقين'); return; }
   const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
-  queue.push({action:'add', id, tea:current[0], type:TYPE[current[1]], cups:vals.cups, tasted:vals.tasted, pots:vals.pots, packs:vals.packs, date:todayKey(), time:timeNow()});
+  queue.push({action:'add', id, tea:current[0], type:TYPE[current[1]], cups:vals.cups, tasted:vals.tasted, pots:vals.pots, packs:vals.packs, rating:vals.rating, date:todayKey(), time:timeNow()});
   store.set('queue', queue); lastId = id;
-  closeSheet(); renderAll(); toast('اتسجّل ✓ ' + current[0], true); flush();
+  closeSheet(); renderAll(); toast('تم التسجيل ✓ ' + current[0], true); flush();
 };
 
 function toast(msg, withUndo){
@@ -247,7 +265,7 @@ async function flush(){
       const q = queue[0];
       const res = await fetch(API, {method:'POST', body:JSON.stringify(Object.assign({pin}, q))});
       const j = await res.json();
-      if(!j.ok){ if(j.error === 'pin'){ askPin('الرقم السري اتغير، اكتبه تاني'); } break; }
+      if(!j.ok){ if(j.error === 'pin'){ askPin('تم تغيير الرقم السري، أدخله مرة أخرى'); } break; }
       queue.shift(); store.set('queue', queue);
       if(q.action === 'add') rows.push(q); else rows = rows.filter(r => r.id !== q.id);
     }
@@ -260,7 +278,7 @@ async function refresh(){
     const res = await fetch(API + '?pin=' + encodeURIComponent(pin));
     const j = await res.json();
     if(j.ok){ rows = j.rows || []; renderAll(); }
-    else if(j.error === 'pin') askPin('الرقم السري غلط');
+    else if(j.error === 'pin') askPin('الرقم السري غير صحيح');
   }catch(e){}
 }
 
@@ -272,8 +290,8 @@ $('pinGo').onclick = async () => {
   try{
     const res = await fetch(API + '?pin=' + encodeURIComponent(v)); const j = await res.json();
     if(j.ok){ pin = v; store.set('pin', pin); $('pin').classList.remove('show'); rows = j.rows || []; renderAll(); flush(); }
-    else $('pinErr').textContent = 'الرقم غلط';
-  }catch(e){ $('pinErr').textContent = 'اتأكد من النت وجرّب تاني'; }
+    else $('pinErr').textContent = 'الرقم السري غير صحيح';
+  }catch(e){ $('pinErr').textContent = 'تأكد من الاتصال بالإنترنت وحاول مرة أخرى'; }
 };
 
 window.addEventListener('online', flush);
